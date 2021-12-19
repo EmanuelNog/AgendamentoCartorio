@@ -3,7 +3,8 @@ const crypto = require('crypto');
 
 module.exports = {
     async index(req, res) {
-      const user_id = req.headers.authorization;
+     // const user_id = req.headers.authorization;
+      const user_id = "9652d999";
         
       const schedules = await connection('schedules')
         .where('user_id', user_id)
@@ -13,20 +14,25 @@ module.exports = {
     },
 
     async create(req, res) {
-        const { description, date_init_string, date_init_int, date_final_string, date_final_int} = req.body;
+        const { title, start, end} = req.body;
         const id = crypto.randomBytes(4).toString('HEX');
-        const user_id = req.headers.authorization;
+        //const user_id = req.headers.authorization;
+        const user_id = "9652d999";
         
         await connection('schedules').insert({
             id,
-            description,
-            date_init_string, 
-            date_init_int, 
-            date_final_string, 
-            date_final_int,
-            user_id,
+            title,
+            start, 
+            end,
+            user_id
         })
-        return res.json({ id });
+        return res.json({ 
+            id,
+            title,
+            start, 
+            end,
+            user_id
+        });
     },
 
     async delete(req,res){

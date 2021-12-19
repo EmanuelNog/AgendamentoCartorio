@@ -19,6 +19,6 @@ routes.get('/register', UserController.index);
 
 routes.post('/session', SessionController.create);
 
-routes.index('/profile', ProfileController.create);
+routes.get('/profile', ProfileController.index);
 
 module.exports = routes;

@@ -1,4 +1,4 @@
-import React,{useState}  from 'react';
+import React,{useState, useEffect}  from 'react';
 import {Calendar,  dateFnsLocalizer} from 'react-big-calendar';
 import format from 'date-fns/format';
 import parse from 'date-fns/parse';
@@ -7,9 +7,8 @@ import getDay from 'date-fns/getDay';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import './bigCalendar_styles.css'
-
-
+import './bigCalendar_styles.css';
+import api from '../../services/api';
 
 const locales = {
     //"en-US": require("date-fns/locale/en-US"),
@@ -38,34 +37,24 @@ export default function BigCalendar(){
     const [newEvent, setNewEvent] = useState({ title: "", start: "", end: "" });
     const [allEvents, setAllEvents] = useState([{ title: "", start: new Date(), end: new Date() }]);
 
-    /*
-    function handleDateTimeSelection() {
-        const start = new Date();
-        const StartInMilliseconds = Number(new Date (start).getTime());
-        const newTime = StartInMilliseconds + 1800000;
-        const end = new Date (newTime);
-        testEvent.end = end;
-        testEvent.start = start;
+    //console.log(new Date("2021-12-04T18:30:00.000Z"));
+    
+    useEffect(()=>{
+        api.get('profile').then(res => { 
+            setAllEvents(res.data);
+        });
+    })
 
-        setNewEvent({...newEvent, testEvent});
-        //setNewEvent({ ...newEvent, end })
-        
+    async function handleAddEvent() {
         setAllEvents([...allEvents, newEvent]);
+        console.log(newEvent);
 
-        console.log(" start : " + start);
-        console.log(" newEvent.start : " + newEvent.start);
-        console.log(" newEvent.end : " + newEvent.end);
-        console.log(" StartInMilliseconds : " + StartInMilliseconds);
-        console.log("newTime : "  + newTime);
-        console.log("end : " + end);
-        console.log("    ");
-        console.log("    ");
-
-    }
-    */
-
-    function handleAddEvent() {
-        setAllEvents([...allEvents, newEvent]);
+        try {                      
+            const res = await api.post('scheduler', newEvent);
+            console.log(res.data);            
+        }catch(err){
+            alert("Erro no agendamento");
+        }
     }
 
     function handleCheck(){
@@ -93,3 +82,27 @@ export default function BigCalendar(){
         </div>
     );
 }
+ /*
+    function handleDateTimeSelection() {
+        const start = new Date();
+        const StartInMilliseconds = Number(new Date (start).getTime());
+        const newTime = StartInMilliseconds + 1800000;
+        const end = new Date (newTime);
+        testEvent.end = end;
+        testEvent.start = start;
+
+        setNewEvent({...newEvent, testEvent});
+        //setNewEvent({ ...newEvent, end })
+        
+        setAllEvents([...allEvents, newEvent]);
+
+        console.log(" start : " + start);
+        console.log(" newEvent.start : " + newEvent.start);
+        console.log(" newEvent.end : " + newEvent.end);
+        console.log(" StartInMilliseconds : " + StartInMilliseconds);
+        console.log("newTime : "  + newTime);
+        console.log("end : " + end);
+        console.log("    ");
+        console.log("    ");
+    }
+    */

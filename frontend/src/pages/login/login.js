@@ -1,15 +1,29 @@
-import React, { useState } from 'react';
-import Calendar from 'react-calendar';
+import React, { useState } from 'react'
+import {Link, useHistory} from 'react-router-dom';
+import api from '../../services/api';
+
 import './login_styles.css'
 
 export default function Login() {
-    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const history = useHistory();
 
 
-    async function handleLogin() {
+    async function handleLogin(e) {
+        e.preventDefault();
 
+        try {
+            const res = await api.post('session',{email,password});
+            
+            localStorage.setItem('userId',res.data.id);
+
+            //history.push('/profile');
+        }catch(err){
+            alert('Falha no login, tente novamente.');
+        }
     }
+
 
     return (
         <div className="login-container">
@@ -19,25 +33,20 @@ export default function Login() {
                     <p> </p>
                 </section>
                 <form onSubmit={handleLogin}>
-                    <input placeholder="Email"
-                        value={name}
-                        onChange={e => setName(e.target.value)}
+                    <input placeholder="Seu Email"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
                     />
 
                     <input placeholder="Senha"
                         value={password}
                         onChange={e => setPassword(e.target.value)}
                     />
-
-                    <div className="passwordField">
-                        <text> senha: </text>
-                        <input type="password" />
-                    </div>
-                    <div>
-                        <button className="button" type="submit"> Login </button>
-                        <button className="registerButton" type="button"> Cadastrar </button>
-                    </div>
+                    <button className="loginButton" type="submit"> Entrar </button>
                 </form>
+                <Link className="back-link" to="/register">
+                        <h4>Cadastrar-se</h4>
+                    </Link>
             </div>
         </div>
 
