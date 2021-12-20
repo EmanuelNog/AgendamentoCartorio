@@ -10,11 +10,12 @@ import "react-datepicker/dist/react-datepicker.css";
 import './bigCalendar_styles.css';
 import api from '../../services/api';
 
+const userId = localStorage.getItem('userId');
+
 const locales = {
     //"en-US": require("date-fns/locale/en-US"),
     //"pt-BR": require("date-fns/locale/pt-BR"),
 }
-
 const localizer = dateFnsLocalizer({
     format,
     parse,
@@ -22,45 +23,66 @@ const localizer = dateFnsLocalizer({
     getDay,
     locales
 })
-/*
-const events = [
-    {
-        title: "Big Meeting",
-        allDay: true,
-        start: new Date(2021, 6, 0),
-        end: new Date(2021, 6, 0),
-    }
-];*/
 
 export default function BigCalendar(){
- 
     const [newEvent, setNewEvent] = useState({ title: "", start: "", end: "" });
     const [allEvents, setAllEvents] = useState([{ title: "", start: new Date(), end: new Date() }]);
+    const [eventSelect, setEventSelect] = useState({
+        id: "",
+        title: "",
+        start: "",
+        end: "",
+        user_id: ""
+    });
 
-    //console.log(new Date("2021-12-04T18:30:00.000Z"));
-    
     useEffect(()=>{
-        api.get('profile').then(res => { 
-            setAllEvents(res.data);
-        });
+        try{
+            api.get('profile').then(res => { 
+                setAllEvents(res.data);
+            });
+        }catch(err){
+            console.log(err);
+        }
     })
-
     async function handleAddEvent() {
-        setAllEvents([...allEvents, newEvent]);
-        console.log(newEvent);
+        const tempStart = newEvent.start;
+        const tempEnd = newEvent.end;
+        newEvent.start = new Date(tempStart-10800000);
+        newEvent.end = new Date(tempEnd-10800000);
+
+        console.log(userId);
 
         try {                      
-            const res = await api.post('scheduler', newEvent);
-            console.log(res.data);            
+            const res = await api.post('scheduler', newEvent,{
+                headers:{
+                    Authorization:userId,
+                }
+            });
+            console.log(res.data);  
         }catch(err){
-            alert("Erro no agendamento");
+            alert("Erro no scheduler");
+        }
+
+        await api.get('profile').then(res => { 
+            setAllEvents(res.data);
+        });
+    }
+
+    async function handleEventSelected(){
+        //setEventSelect(e);
+        console.log(eventSelect);
+        //console.log(e);
+        try{
+            await api.delete(`scheduler/${eventSelect.id}`,{
+                headers: {
+                    Authorization: userId,
+                }
+            })
+        }catch(err){
+            alert("Este agendamento nao é seu.");
         }
     }
 
-    function handleCheck(){
-        console.log(allEvents)
-    }
-    //(start) => setNewEvent({ ...newEvent, start }) (start)=> handleDateTimeSelection(start)
     return (
         <div className="BigCalendar">
             <div className="header">
@@ -77,8 +99,16 @@ export default function BigCalendar(){
                 <button className="button" stlye={{ marginTop: "10px" }} onClick={handleAddEvent}>
                     Agendar
                 </button>
+                <button className="button" stlye={{ marginTop: "10px" }} onClick={handleEventSelected}>
+                    Desagendar
+                </button>
             </div>
-            <Calendar localizer={localizer} events={allEvents} startAccessor="start" endAccessor="end" style={{ height: 500, margin: "20px" }} />
+            <Calendar   localizer={localizer} 
+                        events={allEvents} 
+                        startAccessor="start" 
+                        endAccessor="end" 
+                        onSelectEvent={(e)=> setEventSelect(e)}
+                        style={{ height: 500, margin: "20px" }} />
         </div>
     );
 }

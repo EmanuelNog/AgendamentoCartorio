@@ -9,7 +9,7 @@ const routes = express.Router();
 
 routes.post('/scheduler', SchedulerController.create);
 routes.get('/scheduler', SchedulerController.index);
-//routes.delete('/scheduler/:id', SchedulerController.delete);
+routes.delete('/scheduler/:id', SchedulerController.delete);
 //routes.put('/scheduler/:id', SchedulerController.edit);
 
 routes.post('/register', UserController.create);

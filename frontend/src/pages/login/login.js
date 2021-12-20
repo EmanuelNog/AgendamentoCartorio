@@ -18,7 +18,7 @@ export default function Login() {
             
             localStorage.setItem('userId',res.data.id);
 
-            //history.push('/profile');
+            history.push('/calendar');
         }catch(err){
             alert('Falha no login, tente novamente.');
         }

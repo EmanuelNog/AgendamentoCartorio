@@ -3,8 +3,7 @@ const crypto = require('crypto');
 
 module.exports = {
     async index(req, res) {
-     // const user_id = req.headers.authorization;
-      const user_id = "9652d999";
+     const user_id = req.headers.authorization;
         
       const schedules = await connection('schedules')
         .where('user_id', user_id)
@@ -16,8 +15,7 @@ module.exports = {
     async create(req, res) {
         const { title, start, end} = req.body;
         const id = crypto.randomBytes(4).toString('HEX');
-        //const user_id = req.headers.authorization;
-        const user_id = "9652d999";
+        const user_id = req.headers.authorization;
         
         await connection('schedules').insert({
             id,
@@ -38,7 +36,7 @@ module.exports = {
     async delete(req,res){
         const {id} = req.params;
         const user_id = req.headers.authorization;
-    
+
         const schedule = await connection('schedules')
         .where('id',id)
         .select('user_id')

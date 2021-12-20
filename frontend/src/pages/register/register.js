@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 
-//import api from '../../services/api';
+import api from '../../services/api';
 import './register_styles.css';
 
 
 export default function Register() {
   const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
   const [city, setCity] = useState('');
@@ -20,6 +21,7 @@ export default function Register() {
 
     const data = {
       name,
+      password,
       email,
       whatsapp,
       city,
@@ -27,9 +29,9 @@ export default function Register() {
     };
 
     try {
-      const response = ("");//await api.post('ongs', data);
+      await api.post('register', data);
 
-      alert(`Seu ID de acesso: ${response.data.id}`);
+      alert(`Voce foi cadastrado, por favor faca seu login.`);
 
       history.push('/');
     } catch (err) {
@@ -53,9 +55,14 @@ export default function Register() {
 
         <form onSubmit={handleRegister}>
           <input 
-            placeholder="Nome da ONG"
+            placeholder="Seu Nome"
             value={name}
             onChange={e => setName(e.target.value)}
+          />
+          <input 
+            placeholder="Senha"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
           />
 
           <input 
