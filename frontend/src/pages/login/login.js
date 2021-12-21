@@ -33,7 +33,7 @@ export default function Login() {
                     <p> </p>
                 </section>
                 <form onSubmit={handleLogin}>
-                    <input placeholder="Seu Email"
+                    <input placeholder="Email"
                         value={email}
                         onChange={e => setEmail(e.target.value)}
                     />
@@ -42,11 +42,12 @@ export default function Login() {
                         value={password}
                         onChange={e => setPassword(e.target.value)}
                     />
-                    <button className="loginButton" type="submit"> Entrar </button>
-                </form>
-                <Link className="back-link" to="/register">
-                        <h4>Cadastrar-se</h4>
+                    <button className="button" type="submit"> Entrar </button>
+                    <Link className="back-link" to="/register">
+                        <h4>Nao tenho cadastro.</h4>
                     </Link>
+                </form>
+                
             </div>
         </div>
 
